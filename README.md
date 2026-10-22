@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Valtioneuvoston PTS & IES - Päätöksentekojärjestelmä (Next.js + TypeScript)
 
-## Getting Started
+Tämä sovellus on toimiva prototyyppi Valtioneuvoston kanslian (**VNK**) ja ministeriöiden sähköisestä päätöksentekojärjestelmästä, joka koostuu päätöksentekosovelluksesta (**PTS**) ja istuntosovelluksesta (**IES**) osana valtionhallinnon asianhallintaratkaisua (**VAHVA**).
 
-First, run the development server:
+Sovellus on optimoitu **suoraan Vercel-pilveen vietäväksi** ilman ulkoisia tietokanta-asennuksia tai maksullisia lisäpalveluita.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🏛️ Järjestelmän osat ja elinkaari
+
+```
+┌─────────────────────────────────┐
+│     1. VALMISTELU (PTS)         │  • Asian laadinta & diaarinumero (VN/xxxx/2026)
+│  Esittelijän / virkamiehen      │  • Esittelymuistio, päätösehdotus, asiakirjaliitteet
+│          työpöytä               │  • Salassapitoisuusluokittelu (JulkL 24 §)
+└────────────────┬────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│   2. TARKASTUS & ESITYSLISTA    │  • Johdon tarkastuskierto
+│             (PTS)               │  • Kytkeminen istuntoon (YI / TP / RV) pykäläksi
+│                                 │  • Esityslistan lukitseminen
+└────────────────┬────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│       3. ISTUNTO (IES)          │  • Reaaliaikainen kosketusnäyttö-/tablettinäkymä
+│   Ministerit, Pääministeri,     │  • Läsnäolon vahvistus & esteellisyyksien ilmoitus (HL 28 §)
+│  Presidentti, Istuntosihteeri   │  • Päätöksenteko: hyväksytty, pöydälle pano, eriävä mielipide
+└────────────────┬────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│    4. ARKISTO & PÖYTÄKIRJAT     │  • Virallinen päätöspöytäkirjanote
+│       (VAHVA-arkisto)           │  • Arkistointi, toimenpidejakelu (Eduskunta / Finlex)
+└─────────────────────────────────┘
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 💡 Miten demota sovellusta (erityisesti Vercelissä)?
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Sovelluksessa on käytössä **selaintallennus (`localStorage`) + `BroadcastChannel`-rajapinta**.
 
-## Learn More
+1. Avaa kaksi selainikkunaa näytöllesi vierekkäin:
+   - **Vasen ikkuna:** [`/pts`](http://localhost:3000/pts) (Esittelijän näkymä)
+   - **Oikea ikkuna:** [`/ies`](http://localhost:3000/ies) (Istuntosalin / ministerin näkymä)
+2. **Kokeile reaaliaikaista virkamiestyön ja ministerin vuorovaikutusta:**
+   - Luo PTS:ssä uusi asia tai hyväksy asia esityslistalle.
+   - Huomaa, miten oikeanpuoleisen ikkunan IES-esityslista päivittyy **välittömästi ilman sivun uudelleenlatausta**.
+   - Valitse IES:ssä ministeri ja klikkaa **"Ilmoita esteellisyys"** (esim. intressijääviys HL 28 §).
+   - Avaa istunto ja tee päätös (*Hyväksytty*, *Pannaan pöydälle* tai *Eriävä mielipide*).
+   - Päätä istunto ja siirry arkistoon tarkastelemaan virallista päätöspöytäkirjanotetta.
+3. Voit milloin tahansa nollata esimerkkidatan yläpalkin **"Nollaa demodata"** -painikkeesta.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🚀 Paikallinen käynnistys
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# Asenna riippuvuudet (valmiina)
+npm install
 
-## Deploy on Vercel
+# Käynnistä kehityspalvelin
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Avaa selaimessa: [http://localhost:3000](http://localhost:3000)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📦 Vercel-deploysi
+
+Tämä projekti ei vaadi mitään ympäristömuuttujia toimiakseen Vercelissä.
+
+Voit viedä sen Verceliin suoraan:
+```bash
+# Vercel CLI:llä
+npx vercel
+
+# Tai puskaamalla Git-repoon ja kytkemällä se vercel.com:iin
+```
